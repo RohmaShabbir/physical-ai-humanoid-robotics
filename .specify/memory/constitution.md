@@ -1,55 +1,41 @@
-# [PROJECT_NAME] Constitution
-<!-- Example: Spec Constitution, TaskFlow Constitution, etc. -->
+<!-- SYNC IMPACT REPORT
+Version change: N/A (initial version) → 1.0.0
+Modified principles: N/A
+Added sections: All principles and sections (initial creation)
+Removed sections: N/A
+Templates requiring updates: N/A (initial creation)
+Follow-up TODOs: None
+-->
+
+# AI/Spec-Driven Book Creation – Physical AI & Humanoid Robotics Constitution
 
 ## Core Principles
 
-### [PRINCIPLE_1_NAME]
-<!-- Example: I. Library-First -->
-[PRINCIPLE_1_DESCRIPTION]
-<!-- Example: Every feature starts as a standalone library; Libraries must be self-contained, independently testable, documented; Clear purpose required - no organizational-only libraries -->
+### Spec-Driven Development
+100% spec-driven development: every chapter, section, and claim originates from this constitution and subsequent specs; All factual statements must be directly traceable to cited sources; Minimum 60% of all references must be peer-reviewed papers
 
-### [PRINCIPLE_2_NAME]
-<!-- Example: II. CLI Interface -->
-[PRINCIPLE_2_DESCRIPTION]
-<!-- Example: Every library exposes functionality via CLI; Text in/out protocol: stdin/args → stdout, errors → stderr; Support JSON + human-readable formats -->
+### Accuracy Through Primary Source Verification
+Accuracy through primary source verification only; Source priority order: 1. Peer-reviewed journal papers and conference proceedings, 2. Official technical reports from recognized institutions/companies, 3. Authoritative books and PhD theses, 4. Credible industry whitepapers; All diagrams, tables, code snippets, or photos must have a traceable source or be originally created and marked as such
 
-### [PRINCIPLE_3_NAME]
-<!-- Example: III. Test-First (NON-NEGOTIABLE) -->
-[PRINCIPLE_3_DESCRIPTION]
-<!-- Example: TDD mandatory: Tests written → User approved → Tests fail → Then implement; Red-Green-Refactor cycle strictly enforced -->
+### Maximum Transparency and Reproducibility
+Maximum transparency and reproducibility; Zero tolerance for unverified claims or plagiarism; All code examples must be testable and include a GitHub repository link; Writing clarity target: Flesch-Kincaid Grade Level 11–13 (readable by senior CS undergraduates and graduate students)
 
-### [PRINCIPLE_4_NAME]
-<!-- Example: IV. Integration Testing -->
-[PRINCIPLE_4_DESCRIPTION]
-<!-- Example: Focus areas requiring integration tests: New library contract tests, Contract changes, Inter-service communication, Shared schemas -->
+### Technical Standards and Deployment
+Publishing platform: Docusaurus v3+; Deployment target: Github pages; Development Framework: Specify-kit Plus + claude code; Version control: Git with structured commit history; Final deployment: GitHub Pages (publicly accessible URL required)
 
-### [PRINCIPLE_5_NAME]
-<!-- Example: V. Observability, VI. Versioning & Breaking Changes, VII. Simplicity -->
-[PRINCIPLE_5_DESCRIPTION]
-<!-- Example: Text I/O ensures debuggability; Structured logging required; Or: MAJOR.MINOR.BUILD format; Or: Start simple, YAGNI principles -->
+### Quality and Compliance
+Book successfully builds with Spec-Kit Plus without errors; Live deployment on GitHub Pages passes Google Lighthouse score ≥90; Zero unresolved fact-check flags after internal review; All sources verifiable and links working at time of publication; Plagiarism policy: 0% tolerance (all drafts must pass Turnitin or equivalent with <3% similarity excluding references and code)
 
-### [PRINCIPLE_6_NAME]
+### Content Constraints
+Total book length: 20,000–35,000 words (excluding references and appendices); Minimum 80 total sources across the entire book; Minimum 15 sources per major chapter; Citation style: APA 7th edition (in-text + reference list)
 
+## Academic Standards
+Designed for a technical/academic audience with computer science and engineering background; Tone: professional, precise, academic but approachable
 
-[PRINCIPLE__DESCRIPTION]
-
-## [SECTION_2_NAME]
-<!-- Example: Additional Constraints, Security Requirements, Performance Standards, etc. -->
-
-[SECTION_2_CONTENT]
-<!-- Example: Technology stack requirements, compliance standards, deployment policies, etc. -->
-
-## [SECTION_3_NAME]
-<!-- Example: Development Workflow, Review Process, Quality Gates, etc. -->
-
-[SECTION_3_CONTENT]
-<!-- Example: Code review requirements, testing gates, deployment approval process, etc. -->
+## Development Workflow
+Every diagram, table, code snippet, or photo must have a traceable source or be originally created and marked as such; All code examples must be testable and include a GitHub repository link
 
 ## Governance
-<!-- Example: Constitution supersedes all other practices; Amendments require documentation, approval, migration plan -->
+All development must follow spec-driven development principles; All PRs/reviews must verify compliance with citation and source requirements; All factual statements must be directly traceable to cited sources; Book must be built with Docusaurus v3+ using Spec-Kit Plus templates
 
-[GOVERNANCE_RULES]
-<!-- Example: All PRs/reviews must verify compliance; Complexity must be justified; Use [GUIDANCE_FILE] for runtime development guidance -->
-
-**Version**: [CONSTITUTION_VERSION] | **Ratified**: [RATIFICATION_DATE] | **Last Amended**: [LAST_AMENDED_DATE]
-<!-- Example: Version: 2.1.1 | Ratified: 2025-06-13 | Last Amended: 2025-07-16 -->
+**Version**: 1.0.0 | **Ratified**: 2025-12-11 | **Last Amended**: 2025-12-11
