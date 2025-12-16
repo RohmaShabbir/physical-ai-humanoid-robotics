@@ -1,0 +1,105 @@
+# ROS 2 Service Interface: SafetyMonitorService
+
+## Overview
+Service interface for safety monitoring and emergency stop functionality.
+
+## Service Definition
+
+```yaml
+# Request: Contains safety-related queries or commands
+service: SafetyMonitorService
+
+request:
+  # Type of safety operation
+  operation_type: string  # "heartbeat", "emergency_stop", "check_safety", "set_autonomy_level"
+
+  # Parameters for the operation
+  operation_params: object
+
+response:
+  # Success status
+  success: bool
+
+  # Safety status information
+  safety_status:
+    operational: bool  # Whether the system is currently operational
+    emergency_stop_active: bool  # Whether emergency stop is active
+    last_heartbeat: string  # ISO timestamp of last heartbeat
+    autonomy_level: string  # Current autonomy level
+    safety_violations: array  # List of recent safety violations
+    system_status: string  # Current system status
+
+  # Error message if success is false
+  error_message: string
+```
+
+## Usage Examples
+
+### Example 1: Heartbeat Check
+```
+request:
+  operation_type: "heartbeat"
+  operation_params:
+    heartbeat_id: "robot_001"
+    component_status:
+      vla_system: "operational"
+      voice_system: "operational"
+      skill_executor: "operational"
+
+response:
+  success: true
+  safety_status:
+    operational: true
+    emergency_stop_active: false
+    last_heartbeat: "2025-12-12T10:30:45.123Z"
+    autonomy_level: "full_autonomy"
+    safety_violations: []
+    system_status: "normal"
+  error_message: ""
+```
+
+### Example 2: Emergency Stop
+```
+request:
+  operation_type: "emergency_stop"
+  operation_params:
+    reason: "obstacle_detected"
+    initiated_by: "sensor_fusion_node"
+
+response:
+  success: true
+  safety_status:
+    operational: false
+    emergency_stop_active: true
+    last_heartbeat: "2025-12-12T10:30:45.123Z"
+    autonomy_level: "none"
+    safety_violations: ["obstacle_detected_at_2025-12-12T10:30:44.987Z"]
+    system_status: "emergency_stop"
+  error_message: ""
+```
+
+### Example 3: Set Autonomy Level
+```
+request:
+  operation_type: "set_autonomy_level"
+  operation_params:
+    new_level: "shared_control"
+    reason: "user_request"
+
+response:
+  success: true
+  safety_status:
+    operational: true
+    emergency_stop_active: false
+    last_heartbeat: "2025-12-12T10:30:46.456Z"
+    autonomy_level: "shared_control"
+    safety_violations: []
+    system_status: "normal"
+  error_message: ""
+```
+
+## Validation Rules
+- `operation_type` must be one of the allowed values
+- `autonomy_level` must be "shadow", "shared_control", "full_autonomy", or "none"
+- `success` must be true when safety operations complete successfully
+- `operational` must be false when `emergency_stop_active` is true

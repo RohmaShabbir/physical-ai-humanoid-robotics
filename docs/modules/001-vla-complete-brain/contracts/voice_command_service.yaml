@@ -1,0 +1,99 @@
+# ROS 2 Service Interface: VoiceCommandService
+
+## Overview
+Service interface for processing voice commands and converting them to structured robot goals.
+
+## Service Definition
+
+```yaml
+# Request: Contains voice command for processing
+service: VoiceCommandService
+
+request:
+  # Raw audio data or text
+  audio_data: sensor_msgs/AudioData  # Optional if text is provided
+  text_command: string  # Optional if audio_data is provided
+
+  # Context information
+  context:
+    robot_state: string  # "idle", "executing", "error", etc.
+    environment_state: string  # "kitchen", "living_room", etc.
+    available_objects: array  # List of objects detected in environment
+
+response:
+  # Success status
+  success: bool
+
+  # Processed command structure
+  command_structure:
+    action_sequence:
+      - action_type: string  # "grasp", "navigate", "place", etc.
+      - parameters: object  # Specific parameters for the action
+      - priority: int  # Priority level (0-10)
+
+    target_object: string  # Object to interact with
+    target_location: string  # Location to navigate to or place at
+    execution_plan: string  # High-level plan description
+
+  # Confidence in interpretation
+  confidence: float  # 0.0 to 1.0
+
+  # Error message if success is false
+  error_message: string
+
+  # Additional information for the LLM
+  llm_prompt_context: string
+```
+
+## Usage Examples
+
+### Example 1: Simple Object Retrieval
+```
+request:
+  text_command: "bring me the red cup from the table"
+  context:
+    robot_state: "idle"
+    environment_state: "kitchen"
+    available_objects: ["red cup", "blue bottle", "plate"]
+
+response:
+  success: true
+  command_structure:
+    action_sequence:
+      - {action_type: "navigate", parameters: {target: "table"}, priority: 5}
+      - {action_type: "grasp", parameters: {object: "red cup"}, priority: 5}
+      - {action_type: "navigate", parameters: {target: "user"}, priority: 5}
+    target_object: "red cup"
+    target_location: "user"
+    execution_plan: "Go to table, grasp red cup, return to user"
+  confidence: 0.85
+```
+
+### Example 2: Complex Task
+```
+request:
+  text_command: "the red cup is on the table. bring it to the kitchen sink."
+  context:
+    robot_state: "idle"
+    environment_state: "kitchen"
+    available_objects: ["red cup", "blue bottle", "plate"]
+
+response:
+  success: true
+  command_structure:
+    action_sequence:
+      - {action_type: "navigate", parameters: {target: "table"}, priority: 5}
+      - {action_type: "grasp", parameters: {object: "red cup"}, priority: 5}
+      - {action_type: "navigate", parameters: {target: "kitchen sink"}, priority: 5}
+      - {action_type: "place", parameters: {target: "kitchen sink"}, priority: 5}
+    target_object: "red cup"
+    target_location: "kitchen sink"
+    execution_plan: "Go to table, grasp red cup, navigate to sink, place cup"
+  confidence: 0.92
+```
+
+## Validation Rules
+- Either `audio_data` OR `text_command` must be provided
+- `confidence` must be between 0.0 and 1.0
+- `priority` values must be between 0 and 10
+- `success` must be true if `command_structure` is populated

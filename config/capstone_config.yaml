@@ -1,0 +1,29 @@
+# Capstone Project Configuration
+task_parameters:
+  max_execution_time: 300  # 5 minutes for real robot (300 seconds)
+  max_simulation_time: 180  # 3 minutes for simulation (180 seconds)
+  target_objects:
+    - "red cup"
+    - "blue bottle"
+    - "plate"
+    - "book"
+  target_locations:
+    - "kitchen sink"
+    - "table"
+    - "shelf"
+    - "cabinet"
+
+performance_thresholds:
+  success_rate: 0.8  # 80% success rate required
+  latency_threshold: 2.0  # Maximum 2.0 seconds for speech-to-action
+  tokens_per_second: 5.0  # Minimum tokens per second for VLA model
+
+evaluation:
+  metrics_collection: true
+  video_recording: true
+  log_detailed_metrics: true
+
+simulation:
+  enable_simulation_mode: true
+  simulation_environment: "isaac_sim"
+  real_robot_mode: false

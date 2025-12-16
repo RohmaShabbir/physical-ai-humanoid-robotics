@@ -1,0 +1,124 @@
+# ROS 2 Action Interface: SkillExecutionAction
+
+## Overview
+Action interface for executing robot skills with monitoring and error handling.
+
+## Action Definition
+
+```yaml
+# Request: Contains skill parameters for execution
+action: SkillExecutionAction
+
+request:
+  # Type of skill to execute
+  skill_type: string  # "grasp", "navigate", "place", etc.
+
+  # Parameters specific to the skill
+  skill_params: object
+
+  # Execution constraints
+  constraints:
+    timeout: float  # Maximum execution time in seconds
+    max_retries: int  # Maximum number of retry attempts
+    safety_limits: object  # Safety constraints for the skill
+
+result:
+  # Success status
+  success: bool
+
+  # Execution result details
+  result_details:
+    execution_time: float  # Actual execution time in seconds
+    error_code: string  # Error code if execution failed
+    error_description: string  # Human-readable error description
+    final_state: string  # Robot's final state after execution
+
+  # Metrics collected during execution
+  metrics:
+    success_rate: float  # Historical success rate for this skill
+    average_time: float  # Average execution time for this skill
+    resource_usage: object  # CPU, memory, etc. usage during execution
+
+feedback:
+  # Current execution stage
+  execution_stage: string  # "init", "pre_condition_check", "execution", "post_condition_check", "cleanup"
+
+  # Execution progress percentage
+  progress: float  # 0.0 to 1.0
+
+  # Current status message
+  status_message: string
+
+  # Estimated time remaining
+  estimated_time_remaining: float
+```
+
+## Usage Examples
+
+### Example 1: Grasp Skill
+```
+request:
+  skill_type: "grasp"
+  skill_params:
+    target_object: "red cup"
+    grasp_type: "pinch"
+    approach_angle: 45.0
+    force_limit: 10.0
+  constraints:
+    timeout: 30.0
+    max_retries: 3
+    safety_limits:
+      max_force: 20.0
+      max_current: 5.0
+
+result:
+  success: true
+  result_details:
+    execution_time: 8.5
+    error_code: ""
+    error_description: ""
+    final_state: "object_grasped"
+  metrics:
+    success_rate: 0.87
+    average_time: 7.2
+    resource_usage:
+      cpu_percent: 25.3
+      memory_mb: 128.5
+```
+
+### Example 2: Navigation Skill
+```
+request:
+  skill_type: "navigate"
+  skill_params:
+    target_location: "kitchen sink"
+    path_type: "shortest"
+    speed_profile: "normal"
+  constraints:
+    timeout: 120.0
+    max_retries: 2
+    safety_limits:
+      min_distance: 0.5
+      max_speed: 0.5
+
+result:
+  success: true
+  result_details:
+    execution_time: 45.2
+    error_code: ""
+    error_description: ""
+    final_state: "at_destination"
+  metrics:
+    success_rate: 0.94
+    average_time: 42.1
+    resource_usage:
+      cpu_percent: 18.7
+      memory_mb: 96.3
+```
+
+## Validation Rules
+- `skill_type` must be one of the supported skill types
+- `timeout` must be positive
+- `max_retries` must be non-negative
+- `progress` must be between 0.0 and 1.0
+- `success_rate` and `average_time` in metrics must be positive values

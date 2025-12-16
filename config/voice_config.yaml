@@ -1,0 +1,19 @@
+# Voice Processing Configuration
+speech_recognition:
+  model_size: "large-v3"  # Options: tiny, base, small, medium, large-v3
+  language: "en"
+  beam_size: 5
+  compute_type: "float16"  # Use float16 for better performance on Jetson
+  device: "cuda"  # Use "cuda" for GPU acceleration or "cpu"
+
+audio_input:
+  device_index: 0  # Default microphone device
+  sample_rate: 16000
+  chunk_size: 1024
+  threshold: 400  # Silence threshold for voice activation
+  silence_duration: 1.0  # Seconds of silence to consider speech ended
+
+processing:
+  real_time_factor: 8.0  # Target: 8x real-time processing
+  max_audio_duration: 30.0  # Maximum audio duration to process
+  vad_enabled: true  # Voice activity detection

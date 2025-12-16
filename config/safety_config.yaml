@@ -1,0 +1,27 @@
+# Safety System Configuration
+heartbeat:
+  interval: 1.0  # Heartbeat interval in seconds
+  timeout: 3.0  # Timeout after which emergency stop is triggered
+  enabled: true
+
+emergency_stop:
+  enabled: true
+  activation_delay: 0.1  # Delay in seconds before stopping all actions
+  reset_timeout: 5.0  # Minimum time before reset is allowed
+
+autonomy_levels:
+  shadow:
+    description: "System observes and logs but does not execute"
+    permissions: ["log", "monitor"]
+  shared_control:
+    description: "System can execute with human oversight"
+    permissions: ["log", "monitor", "execute_with_confirmation"]
+  full_autonomy:
+    description: "System can execute autonomously"
+    permissions: ["log", "monitor", "execute"]
+
+safety_limits:
+  max_velocity: 0.5  # Maximum robot velocity in m/s
+  max_force: 20.0  # Maximum force in Newtons
+  max_current: 5.0  # Maximum motor current in Amperes
+  min_distance: 0.3  # Minimum safe distance to obstacles in meters

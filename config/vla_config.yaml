@@ -1,0 +1,20 @@
+# VLA Model Configuration
+model:
+  name: "openvla-7b"  # Default model, can be changed to rt2-x, octo-small, etc.
+  checkpoint_path: "/path/to/model/checkpoint"
+  tensorrt_engine_path: "/path/to/tensorrt/engine"
+  precision: "float16"  # or "int8" for quantized models
+  max_batch_size: 1
+  max_workspace_size: 16000000000  # 16GB in bytes
+
+inference:
+  max_sequence_length: 512
+  temperature: 0.1
+  top_k: 50
+  top_p: 0.9
+  streaming: true  # Enable streaming inference
+
+hardware:
+  vram_limit: 8000000000  # 8GB in bytes for Orin Nano
+  use_gpu: true
+  gpu_device_id: 0

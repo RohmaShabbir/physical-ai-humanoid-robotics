@@ -1,0 +1,80 @@
+# ROS 2 Action Interface: VLAInferenceAction
+
+## Overview
+Action interface for Vision-Language-Action model inference with visual and language inputs.
+
+## Action Definition
+
+```yaml
+# Request: Contains visual and language inputs for VLA model
+action: VLAInferenceAction
+
+request:
+  # Image data from robot's camera
+  image_data: sensor_msgs/Image
+
+  # Text command to be processed
+  text_command: string
+
+  # Task-specific parameters
+  task_params:
+    target_object: string
+    target_location: string
+    grasp_type: string  # "pinch", "power", "suction", etc.
+
+result:
+  # Success status
+  success: bool
+
+  # Robot actions to execute
+  robot_actions:
+    - action_type: string  # "grasp", "navigate", "place", etc.
+    - action_params: object  # Parameters specific to the action type
+    - execution_priority: int  # Priority level (0-10)
+
+  # Confidence score for the action sequence
+  confidence: float  # 0.0 to 1.0
+
+  # Error message if success is false
+  error_message: string
+
+feedback:
+  # Current processing stage
+  processing_stage: string  # "visual_encoding", "language_encoding", "fusion", "action_generation"
+
+  # Processing progress percentage
+  progress: float  # 0.0 to 1.0
+
+  # Estimated time remaining (seconds)
+  estimated_time_remaining: float
+```
+
+## Usage Examples
+
+### Example 1: Object Grasping
+```
+request:
+  image_data: [camera image showing a red cup]
+  text_command: "grasp the red cup"
+  task_params:
+    target_object: "red cup"
+    target_location: ""
+    grasp_type: "pinch"
+```
+
+### Example 2: Navigation
+```
+request:
+  image_data: [camera image showing environment]
+  text_command: "navigate to the kitchen"
+  task_params:
+    target_object: ""
+    target_location: "kitchen"
+    grasp_type: ""
+```
+
+## Validation Rules
+- `text_command` must not be empty
+- `confidence` in result must be > 0.5 for execution
+- `processing_stage` must be one of the allowed values
+- `progress` must be between 0.0 and 1.0

@@ -1,0 +1,987 @@
+openapi: 3.0.3
+info:
+  title: Isaac Platform AI Robot Brain API
+  description: API for controlling and monitoring the Isaac Platform AI Robot Brain with perception, mapping, and navigation capabilities
+  version: 1.0.0
+  contact:
+    name: Physical AI Humanoid Robotics Team
+    email: dev@physical-ai-humanoid-robotics.com
+
+servers:
+  - url: http://localhost:8080
+    description: Local development server for Isaac Platform
+  - url: http://jetson-orin:8080
+    description: Jetson Orin deployment server
+
+paths:
+  /perception/status:
+    get:
+      summary: Get perception stack status
+      description: Retrieve the current status and performance metrics of the Isaac ROS perception stack
+      responses:
+        '200':
+          description: Perception stack status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PerceptionStatus'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /perception/control:
+    post:
+      summary: Control perception stack
+      description: Enable or disable specific components of the perception stack
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PerceptionControlRequest'
+      responses:
+        '200':
+          description: Perception control command executed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommandResponse'
+        '400':
+          description: Invalid request parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /mapping/status:
+    get:
+      summary: Get mapping status
+      description: Retrieve the current status and accuracy metrics of the Nvblox mapping system
+      responses:
+        '200':
+          description: Mapping system status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MappingStatus'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /mapping/export:
+    post:
+      summary: Export 3D map
+      description: Export the current 3D map in specified format
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MapExportRequest'
+      responses:
+        '200':
+          description: Map exported successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MapExportResponse'
+        '400':
+          description: Invalid request parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /navigation/goal:
+    post:
+      summary: Set navigation goal
+      description: Set a new navigation goal for the legged robot
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NavigationGoalRequest'
+      responses:
+        '200':
+          description: Navigation goal set successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NavigationGoalResponse'
+        '400':
+          description: Invalid goal coordinates or parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Navigation goal is unreachable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /navigation/status:
+    get:
+      summary: Get navigation status
+      description: Retrieve the current navigation status and progress
+      responses:
+        '200':
+          description: Navigation status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NavigationStatus'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /navigation/cancel:
+    post:
+      summary: Cancel current navigation
+      description: Cancel the current navigation goal
+      responses:
+        '200':
+          description: Navigation cancelled successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommandResponse'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /platform/status:
+    get:
+      summary: Get platform status
+      description: Retrieve the current status of the Jetson Orin platform including thermal and power metrics
+      responses:
+        '200':
+          description: Platform status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PlatformStatus'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /domain-randomization/config:
+    get:
+      summary: Get domain randomization configuration
+      description: Retrieve the current domain randomization settings
+      responses:
+        '200':
+          description: Domain randomization configuration
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DomainRandomizationConfig'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    put:
+      summary: Update domain randomization configuration
+      description: Update the domain randomization settings
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DomainRandomizationConfig'
+      responses:
+        '200':
+          description: Domain randomization configuration updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommandResponse'
+        '400':
+          description: Invalid configuration parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /training-data/generate:
+    post:
+      summary: Generate training data
+      description: Generate synthetic training data using domain randomization
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TrainingDataRequest'
+      responses:
+        '200':
+          description: Training data generated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TrainingDataResponse'
+        '400':
+          description: Invalid training data parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+components:
+  schemas:
+    PerceptionStatus:
+      type: object
+      required:
+        - cuVSLAM_enabled
+        - frame_rate
+        - processing_latency
+      properties:
+        cuVSLAM_enabled:
+          type: boolean
+          description: Whether cuVSLAM is currently enabled
+          example: true
+        stereo_disparity_enabled:
+          type: boolean
+          description: Whether stereo disparity processing is currently enabled
+          example: true
+        apriltag_enabled:
+          type: boolean
+          description: Whether AprilTag detection is currently enabled
+          example: true
+        peoplenet_enabled:
+          type: boolean
+          description: Whether PeopleNet is currently enabled
+          example: true
+        pose_estimation_enabled:
+          type: boolean
+          description: Whether pose estimation is currently enabled
+          example: true
+        frame_rate:
+          type: number
+          description: Current processing frame rate in Hz
+          example: 60.0
+        processing_latency:
+          type: number
+          description: Average processing latency in milliseconds
+          example: 12.5
+        sensor_data_input:
+          type: string
+          description: Reference to input sensor data stream
+          example: "camera/rgb/image_raw"
+        output_pose:
+          $ref: '#/components/schemas/Pose'
+        output_objects:
+          type: array
+          items:
+            $ref: '#/components/schemas/DetectedObject'
+        output_poses:
+          type: array
+          items:
+            $ref: '#/components/schemas/BodyPose'
+
+    PerceptionControlRequest:
+      type: object
+      properties:
+        cuVSLAM_enabled:
+          type: boolean
+          description: Enable/disable cuVSLAM
+          example: true
+        stereo_disparity_enabled:
+          type: boolean
+          description: Enable/disable stereo disparity processing
+          example: true
+        apriltag_enabled:
+          type: boolean
+          description: Enable/disable AprilTag detection
+          example: true
+        peoplenet_enabled:
+          type: boolean
+          description: Enable/disable PeopleNet
+          example: true
+        pose_estimation_enabled:
+          type: boolean
+          description: Enable/disable pose estimation
+          example: true
+
+    MappingStatus:
+      type: object
+      required:
+        - map_accuracy
+        - map_resolution
+        - is_building
+      properties:
+        map_accuracy:
+          type: number
+          description: Current map accuracy in meters
+          example: 0.03
+        map_resolution:
+          type: number
+          description: Resolution of the 3D map in meters
+          example: 0.05
+        map_bounds:
+          $ref: '#/components/schemas/Bounds'
+        tsdf_integration_weight:
+          type: number
+          description: Weight for TSDF integration
+          example: 10.0
+        max_integration_distance_m:
+          type: number
+          description: Maximum distance for integration in meters
+          example: 5.0
+        voxel_size:
+          type: number
+          description: Size of each voxel in meters
+          example: 0.05
+        voxels_per_side:
+          type: integer
+          description: Number of voxels per side of each block
+          example: 16
+        truncation_distance:
+          type: number
+          description: TSDF truncation distance in meters
+          example: 0.3
+        occupancy_threshold:
+          type: number
+          description: Threshold for occupancy determination
+          example: 0.5
+        esdf_enabled:
+          type: boolean
+          description: Whether ESDF computation is active
+          example: true
+        clearing_ray_length_m:
+          type: number
+          description: Length of clearing rays in meters
+          example: 4.0
+        max_ray_length_m:
+          type: number
+          description: Maximum ray length in meters
+          example: 5.0
+        is_building:
+          type: boolean
+          description: Whether map is currently being built
+          example: true
+
+    MapExportRequest:
+      type: object
+      required:
+        - format
+        - filepath
+      properties:
+        format:
+          type: string
+          enum: [pcl, mesh, occupancy_grid]
+          description: Format to export the map in
+          example: "mesh"
+        filepath:
+          type: string
+          description: File path to save the exported map
+          example: "/maps/current_map.ply"
+        resolution:
+          type: number
+          description: Resolution for export (if applicable)
+          example: 0.05
+        bounds:
+          $ref: '#/components/schemas/Bounds'
+
+    MapExportResponse:
+      type: object
+      required:
+        - success
+        - filepath
+        - size_bytes
+      properties:
+        success:
+          type: boolean
+          description: Whether the export was successful
+          example: true
+        filepath:
+          type: string
+          description: Path where the map was saved
+          example: "/maps/current_map.ply"
+        size_bytes:
+          type: integer
+          description: Size of the exported map in bytes
+          example: 10485760
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp of export
+          example: "2025-01-15T10:30:00Z"
+
+    NavigationGoalRequest:
+      type: object
+      required:
+        - goal_x
+        - goal_y
+        - goal_z
+      properties:
+        goal_x:
+          type: number
+          description: X coordinate of goal position
+          example: 5.2
+        goal_y:
+          type: number
+          description: Y coordinate of goal position
+          example: -2.1
+        goal_z:
+          type: number
+          description: Z coordinate of goal position
+          example: 0.0
+        orientation_tolerance:
+          type: number
+          description: Tolerance for goal orientation in radians
+          example: 0.1
+        position_tolerance:
+          type: number
+          description: Tolerance for goal position in meters
+          example: 0.2
+        path_tolerance:
+          type: number
+          description: Tolerance for path following in meters
+          example: 0.3
+        goal_priority:
+          type: integer
+          minimum: 1
+          maximum: 10
+          description: Priority level of the goal
+          example: 5
+        goal_constraints:
+          type: array
+          items:
+            type: string
+          description: Additional constraints for navigation
+          example: ["avoid_dynamic_obstacles", "maintain_stability"]
+
+    NavigationGoalResponse:
+      type: object
+      required:
+        - success
+        - navigation_id
+        - estimated_time
+      properties:
+        success:
+          type: boolean
+          description: Whether the goal was accepted
+          example: true
+        navigation_id:
+          type: string
+          description: Unique identifier for the navigation task
+          example: "nav-001-20250115-103000"
+        estimated_time:
+          type: number
+          description: Estimated time to reach goal in seconds
+          example: 45.2
+        path_length:
+          type: number
+          description: Length of planned path in meters
+          example: 7.8
+
+    NavigationStatus:
+      type: object
+      required:
+        - navigation_status
+        - progress
+      properties:
+        navigation_status:
+          type: string
+          enum: [idle, planning, executing, paused, completed, failed]
+          description: Current status of navigation
+          example: "executing"
+        progress:
+          type: number
+          minimum: 0
+          maximum: 1
+          description: Progress toward goal (0.0 to 1.0)
+          example: 0.65
+        current_position:
+          $ref: '#/components/schemas/Pose'
+        remaining_distance:
+          type: number
+          description: Remaining distance to goal in meters
+          example: 2.3
+        estimated_remaining_time:
+          type: number
+          description: Estimated remaining time in seconds
+          example: 18.7
+        current_velocity:
+          $ref: '#/components/schemas/Twist'
+        path_deviation:
+          type: number
+          description: Deviation from planned path in meters
+          example: 0.15
+        obstacle_detected:
+          type: boolean
+          description: Whether an obstacle has been detected
+          example: false
+
+    PlatformStatus:
+      type: object
+      required:
+        - platform_model
+        - current_temperature
+        - thermal_throttling_active
+      properties:
+        platform_model:
+          type: string
+          description: Model of Jetson platform
+          example: "Jetson Orin NX 16GB"
+        jetpack_version:
+          type: string
+          description: Version of JetPack installed
+          example: "6.1"
+        gpu_memory:
+          type: integer
+          description: Total GPU memory in GB
+          example: 16
+        cpu_cores:
+          type: integer
+          description: Number of CPU cores
+          example: 12
+        thermal_throttling_active:
+          type: boolean
+          description: Whether thermal throttling is active
+          example: false
+        current_power_draw:
+          type: number
+          description: Current power consumption in watts
+          example: 25.3
+        current_temperature:
+          type: number
+          description: Current temperature in Celsius
+          example: 68.2
+        available_memory:
+          type: number
+          description: Available system memory in GB
+          example: 8.2
+        available_gpu_memory:
+          type: number
+          description: Available GPU memory in GB
+          example: 10.5
+        max_power_mode:
+          type: boolean
+          description: Whether max power mode is active
+          example: true
+        gui_disabled:
+          type: boolean
+          description: Whether GUI is disabled
+          example: true
+        tensorrt_optimized:
+          type: boolean
+          description: Whether TensorRT optimization is applied
+          example: true
+        docker_containers_running:
+          type: integer
+          description: Number of active Docker containers
+          example: 3
+        thermal_margin:
+          type: number
+          description: Remaining thermal margin before throttling in Celsius
+          example: 21.8
+
+    DomainRandomizationConfig:
+      type: object
+      properties:
+        lighting_randomization:
+          $ref: '#/components/schemas/LightingRandomization'
+        texture_randomization:
+          $ref: '#/components/schemas/TextureRandomization'
+        pose_randomization:
+          $ref: '#/components/schemas/PoseRandomization'
+        camera_randomization:
+          $ref: '#/components/schemas/CameraRandomization'
+        physics_randomization:
+          $ref: '#/components/schemas/PhysicsRandomization'
+        curriculum_stage:
+          type: number
+          minimum: 0
+          maximum: 1
+          description: Current stage in curriculum learning (0-1 scale)
+          example: 0.6
+        randomization_intensity:
+          type: number
+          minimum: 0
+          maximum: 1
+          description: Current intensity of randomization (0-1 scale)
+          example: 0.7
+        texture_library_path:
+          type: string
+          description: Path to library of textures for randomization
+          example: "/assets/textures/randomization_library"
+        enabled:
+          type: boolean
+          description: Whether domain randomization is enabled
+          example: true
+
+    LightingRandomization:
+      type: object
+      properties:
+        intensity_range:
+          $ref: '#/components/schemas/Range'
+        color_temperature_range:
+          $ref: '#/components/schemas/Range'
+        direction_variation:
+          type: number
+          description: Maximum variation in light direction in radians
+          example: 0.5
+        shadow_softness_range:
+          $ref: '#/components/schemas/Range'
+
+    TextureRandomization:
+      type: object
+      properties:
+        roughness_range:
+          $ref: '#/components/schemas/Range'
+        metallic_range:
+          $ref: '#/components/schemas/Range'
+        normal_map_strength_range:
+          $ref: '#/components/schemas/Range'
+        texture_scale_range:
+          $ref: '#/components/schemas/Range'
+
+    PoseRandomization:
+      type: object
+      properties:
+        position_jitter:
+          $ref: '#/components/schemas/Vector3'
+        orientation_jitter:
+          $ref: '#/components/schemas/Vector3'
+        scale_jitter:
+          $ref: '#/components/schemas/Range'
+
+    CameraRandomization:
+      type: object
+      properties:
+        focal_length_range:
+          $ref: '#/components/schemas/Range'
+        sensor_width_range:
+          $ref: '#/components/schemas/Range'
+        distortion_coefficients_range:
+          type: array
+          items:
+            $ref: '#/components/schemas/Range'
+          maxItems: 5
+        exposure_time_range:
+          $ref: '#/components/schemas/Range'
+
+    PhysicsRandomization:
+      type: object
+      properties:
+        friction_coefficient_range:
+          $ref: '#/components/schemas/Range'
+        restitution_coefficient_range:
+          $ref: '#/components/schemas/Range'
+        mass_variation_percent:
+          type: number
+          description: Maximum mass variation as percentage
+          example: 5.0
+        damping_ratio_range:
+          $ref: '#/components/schemas/Range'
+
+    Range:
+      type: object
+      required:
+        - min
+        - max
+      properties:
+        min:
+          type: number
+          description: Minimum value in range
+          example: 0.1
+        max:
+          type: number
+          description: Maximum value in range
+          example: 1.0
+
+    TrainingDataRequest:
+      type: object
+      required:
+        - sample_count
+        - output_directory
+      properties:
+        sample_count:
+          type: integer
+          description: Number of training samples to generate
+          example: 1000
+        output_directory:
+          type: string
+          description: Directory to save generated samples
+          example: "/training_data/batch_001"
+        curriculum_level:
+          type: number
+          minimum: 0
+          maximum: 1
+          description: Curriculum learning level (0-1 scale)
+          example: 0.5
+        randomization_config:
+          $ref: '#/components/schemas/DomainRandomizationConfig'
+        include_depth:
+          type: boolean
+          description: Whether to include depth data
+          example: true
+        include_semantic:
+          type: boolean
+          description: Whether to include semantic labels
+          example: true
+
+    TrainingDataResponse:
+      type: object
+      required:
+        - success
+        - samples_generated
+        - output_directory
+      properties:
+        success:
+          type: boolean
+          description: Whether training data generation was successful
+          example: true
+        samples_generated:
+          type: integer
+          description: Number of samples actually generated
+          example: 1000
+        output_directory:
+          type: string
+          description: Directory where samples were saved
+          example: "/training_data/batch_001"
+        generation_time:
+          type: number
+          description: Time taken to generate samples in seconds
+          example: 120.5
+        quality_score:
+          type: number
+          minimum: 0
+          maximum: 1
+          description: Quality score of generated samples
+          example: 0.85
+
+    DetectedObject:
+      type: object
+      required:
+        - id
+        - class_name
+        - confidence
+        - position
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the detected object
+          example: "obj-001"
+        class_name:
+          type: string
+          description: Class name of the detected object
+          example: "person"
+        confidence:
+          type: number
+          minimum: 0
+          maximum: 1
+          description: Confidence score of detection
+          example: 0.92
+        position:
+          $ref: '#/components/schemas/Vector3'
+        size:
+          $ref: '#/components/schemas/Vector3'
+        bounding_box:
+          $ref: '#/components/schemas/BoundingBox'
+
+    BodyPose:
+      type: object
+      required:
+        - id
+        - joints
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the pose
+          example: "pose-001"
+        joints:
+          type: array
+          items:
+            $ref: '#/components/schemas/Joint'
+        confidence:
+          type: number
+          minimum: 0
+          maximum: 1
+          description: Overall confidence of pose estimation
+          example: 0.85
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp of pose estimation
+          example: "2025-01-15T10:30:00Z"
+
+    Joint:
+      type: object
+      required:
+        - name
+        - position
+        - confidence
+      properties:
+        name:
+          type: string
+          description: Name of the joint
+          example: "left_shoulder"
+        position:
+          $ref: '#/components/schemas/Vector3'
+        confidence:
+          type: number
+          minimum: 0
+          maximum: 1
+          description: Confidence of joint detection
+          example: 0.91
+
+    Pose:
+      type: object
+      required:
+        - position
+        - orientation
+      properties:
+        position:
+          $ref: '#/components/schemas/Vector3'
+        orientation:
+          $ref: '#/components/schemas/Quaternion'
+
+    Quaternion:
+      type: object
+      properties:
+        x:
+          type: number
+          description: X component
+          example: 0.0
+        y:
+          type: number
+          description: Y component
+          example: 0.0
+        z:
+          type: number
+          description: Z component
+          example: 0.0
+        w:
+          type: number
+          description: W component
+          example: 1.0
+
+    Vector3:
+      type: object
+      properties:
+        x:
+          type: number
+          description: X coordinate
+          example: 1.0
+        y:
+          type: number
+          description: Y coordinate
+          example: 2.0
+        z:
+          type: number
+          description: Z coordinate
+          example: 0.0
+
+    Twist:
+      type: object
+      properties:
+        linear:
+          $ref: '#/components/schemas/Vector3'
+        angular:
+          $ref: '#/components/schemas/Vector3'
+
+    Bounds:
+      type: object
+      properties:
+        min:
+          $ref: '#/components/schemas/Vector3'
+        max:
+          $ref: '#/components/schemas/Vector3'
+
+    BoundingBox:
+      type: object
+      properties:
+        center:
+          $ref: '#/components/schemas/Vector3'
+        size:
+          $ref: '#/components/schemas/Vector3'
+
+    CommandResponse:
+      type: object
+      required:
+        - success
+        - message
+      properties:
+        success:
+          type: boolean
+          description: Whether the command was successful
+          example: true
+        message:
+          type: string
+          description: Human-readable status message
+          example: "Command executed successfully"
+        execution_time:
+          type: number
+          description: Time taken to execute the command in seconds
+          example: 0.002
+
+    Error:
+      type: object
+      required:
+        - error
+        - message
+      properties:
+        error:
+          type: string
+          description: Error code
+          example: "INVALID_PARAMETERS"
+        message:
+          type: string
+          description: Human-readable error message
+          example: "Invalid parameters provided in request"
+        details:
+          type: object
+          description: Additional error details
+          example: {"parameter": "goal_x", "value": "invalid_value"}
